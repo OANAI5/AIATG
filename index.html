@@ -87,4 +87,41 @@
             background: white; 
             box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
         }
-        .submit-btn {
+        .submit-btn { 
+            margin-top: 10px; 
+            padding: 12px 25px; 
+            background: #e74c3c; 
+            color: white; 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            transition: 0.3s; 
+        }
+        .submit-btn:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏗️ BuildSmart</h2>
+        <ul>
+            <li><i class="fas fa-home"></i> 홈</li>
+            <li><i class="fas fa-ruler-combined"></i> AI 설계</li>
+            <li><i class="fas fa-balance-scale"></i> 법규 분석</li>
+            <li><i class="fas fa-cube"></i> 3D 모델</li>
+            <li><i class="fas fa-user"></i> 마이 페이지</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">AI 건축 설계 시스템</div>
+        <div class="chat-container">
+            <h2>🔍 AI 설계 요청</h2>
+            <div class="input-area">
+                <textarea id="input-box" class="input-box" rows="4" placeholder="대지 조건 및 요구 사항을 입력하세요..."></textarea>
+                <button id="submit-btn" class="submit-btn">🔎 설계 요청</button>
+            </div>
+            <div class="chat-box" id="chat-box"></div>
+        </div>
+    </div>
+</body>
+</html>
