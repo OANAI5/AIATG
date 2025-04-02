@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 건축 설계 가이드</title>
+    <title>AI 건축 설계 플랫폼</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background: #f9f9f9; padding: 20px; }
         .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
@@ -20,20 +20,20 @@
     </style>
 </head>
 <body>
-    <h1>AI 건축 설계 가이드</h1>
+    <h1>AI 건축 설계 플랫폼</h1>
     <div class="container">
-        <h2>설계 방향 요청</h2>
-        <textarea id="input-box" rows="4" placeholder="건축 설계 내용을 입력하세요..."></textarea>
+        <h2>건축 설계 자동 생성</h2>
+        <textarea id="input-box" rows="4" placeholder="대지 조건, 요구 사항 입력..."></textarea>
         <input type="file" id="image-upload" accept="image/*">
         <select id="design-type">
             <option value="modern">모던 디자인</option>
             <option value="classic">클래식 디자인</option>
             <option value="eco">친환경 디자인</option>
         </select>
-        <button id="submit-btn">AI 분석 요청</button>
+        <button id="submit-btn">AI 설계 요청</button>
     </div>
     <div class="chat-container">
-        <h2>AI 응답</h2>
+        <h2>AI 분석 결과</h2>
         <div class="chat-box" id="chat-box"></div>
     </div>
     <script>
