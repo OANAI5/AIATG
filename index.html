@@ -25,7 +25,12 @@
         }
         .sidebar h2 { text-align: center; }
         .sidebar ul { list-style: none; padding: 0; }
-        .sidebar ul li { padding: 15px; cursor: pointer; border-bottom: 1px solid #40527f; transition: 0.3s; }
+        .sidebar ul li { 
+            padding: 15px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #40527f; 
+            transition: 0.3s; 
+        }
         .sidebar ul li:hover { background: #3b4f7d; }
         .main-content { 
             margin-left: 250px; 
@@ -100,21 +105,26 @@
         }
         .submit-btn:hover { background: #c0392b; }
     </style>
+    <script>
+        function navigateTo(section) {
+            document.getElementById("content").innerHTML = "<h2>" + section + "</h2><p>" + section + " 페이지가 여기에 표시됩니다.</p>";
+        }
+    </script>
 </head>
 <body>
     <div class="sidebar">
         <h2>🏗️ BuildSmart</h2>
         <ul>
-            <li><i class="fas fa-home"></i> 홈</li>
-            <li><i class="fas fa-ruler-combined"></i> AI 설계</li>
-            <li><i class="fas fa-balance-scale"></i> 법규 분석</li>
-            <li><i class="fas fa-cube"></i> 3D 모델</li>
-            <li><i class="fas fa-user"></i> 마이 페이지</li>
+            <li onclick="navigateTo('홈')"><i class="fas fa-home"></i> 홈</li>
+            <li onclick="navigateTo('AI 설계')"><i class="fas fa-ruler-combined"></i> AI 설계</li>
+            <li onclick="navigateTo('법규 분석')"><i class="fas fa-balance-scale"></i> 법규 분석</li>
+            <li onclick="navigateTo('3D 모델')"><i class="fas fa-cube"></i> 3D 모델</li>
+            <li onclick="navigateTo('마이 페이지')"><i class="fas fa-user"></i> 마이 페이지</li>
         </ul>
     </div>
     <div class="main-content">
         <div class="header">AI 건축 설계 시스템</div>
-        <div class="chat-container">
+        <div id="content" class="chat-container">
             <h2>🔍 AI 설계 요청</h2>
             <div class="input-area">
                 <textarea id="input-box" class="input-box" rows="4" placeholder="대지 조건 및 요구 사항을 입력하세요..."></textarea>
