@@ -6,9 +6,9 @@
     <title>AI 건축 설계 가이드</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        #input-box { width: 80%; padding: 10px; }
+        #input-box { width: 80%; padding: 10px; margin-bottom: 10px; }
         #submit-btn { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
-        #output { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #ccc; min-height: 50px; }
     </style>
 </head>
 <body>
@@ -16,31 +16,40 @@
     <p>건축 설계 아이디어를 입력하면 AI가 방향을 제시합니다.</p>
     <textarea id="input-box" rows="4" placeholder="설계 아이디어를 입력하세요..."></textarea><br>
     <button id="submit-btn">AI 분석 시작</button>
-    <div id="output"></div>
+    <div id="output">여기에 AI 분석 결과가 표시됩니다.</div>
 
     <script>
         document.getElementById('submit-btn').addEventListener('click', async () => {
             const inputText = document.getElementById('input-box').value;
-            if (!inputText) {
+            if (!inputText.trim()) {
                 alert("설계 내용을 입력하세요!");
                 return;
             }
 
-            const apiKey = "YOUR_OPENAI_API_KEY"; // OpenAI API 키 입력
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [{ role: "user", content: inputText }]
-                })
-            });
+            document.getElementById('output').innerText = "AI 분석 중... 잠시만 기다려 주세요.";
 
-            const data = await response.json();
-            document.getElementById('output').innerText = data.choices[0].message.content;
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer YOUR_OPENAI_API_KEY` // OpenAI API 키 입력
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [{ role: "user", content: inputText }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("서버 오류 발생");
+                }
+
+                const data = await response.json();
+                document.getElementById('output').innerText = data.choices[0].message.content;
+            } catch (error) {
+                document.getElementById('output').innerText = "AI 분석 중 오류가 발생했습니다.";
+            }
         });
     </script>
 </body>
