@@ -27,22 +27,22 @@ def analyze_regulations():
     data = request.json
     location = data.get("location", "")
     
-    # 예제: 건축 법규 API 호출 (실제 API 필요)
-    response = requests.get(f"https://building-regulations-api.com/{location}")
+    # 한국 건축 법규 데이터 (예제)
+    regulations_data = {
+        "서울": "건폐율 60%, 용적률 300% 이하",
+        "부산": "건폐율 50%, 용적률 250% 이하"
+    }
     
-    if response.status_code == 200:
-        regulations = response.json()
-        return jsonify({"regulations": regulations})
-    else:
-        return jsonify({"error": "법규 데이터를 가져올 수 없습니다."}), 400
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
+    return jsonify({"regulations": regulations})
 
 @app.route("/generate-3d-model", methods=["POST"])
 def generate_3d_model():
     data = request.json
     design_parameters = data.get("parameters", {})
     
-    # 예제: 3D 모델 생성 API 호출 (실제 API 필요)
-    model_response = requests.post("https://3d-model-generator.com/api", json=design_parameters)
+    # Meshy AI 3D 모델 생성 API 연동 (예제)
+    model_response = requests.post("https://api.meshy.ai/generate", json=design_parameters)
     
     if model_response.status_code == 200:
         model_url = model_response.json().get("model_url", "")
