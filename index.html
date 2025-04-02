@@ -17,6 +17,9 @@ def generate_design():
     data = request.json
     user_input = data.get("description", "")
     
+    if not user_input:
+        return jsonify({"error": "설계 설명을 입력하세요."}), 400
+    
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -50,6 +53,49 @@ def generate_3d_model():
     
     model_url = "https://example.com/sample-3d-model.obj"
     return jsonify({"model_url": model_url})
+
+@app.route("/get-featured-buildings", methods=["GET"])
+def get_featured_buildings():
+    buildings = [
+        {"name": "롯데월드타워", "location": "서울", "height": "555m"},
+        {"name": "부르즈 할리파", "location": "두바이", "height": "828m"},
+        {"name": "엠파이어 스테이트 빌딩", "location": "뉴욕", "height": "381m"}
+    ]
+    return jsonify({"featured_buildings": buildings})
+
+@app.route("/auto-generate", methods=["POST"])
+def auto_generate():
+    """
+    사용자가 설명과 위치를 입력하면 자동으로 설계 방향과 법규를 분석해 반환하는 API
+    """
+    data = request.json
+    user_input = data.get("description", "")
+    location = data.get("location", "")
+    
+    if not user_input or not location:
+        return jsonify({"error": "설계 설명과 위치를 입력하세요."}), 400
+    
+    # 설계 방향 AI 분석
+    design_response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
+            {"role": "user", "content": user_input}
+        ]
+    )
+    design_suggestion = design_response["choices"][0]["message"]["content"]
+    
+    # 법규 분석 자동화
+    regulations_data = {
+        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
+        "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
+        "대구": "건폐율 55%, 용적률 270% 이하, 녹지지역은 30층 이하",
+        "광주": "건폐율 50%, 용적률 260% 이하, 혼합지역은 40층 이하",
+        "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
+    }
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
+    
+    return jsonify({"design_suggestion": design_suggestion, "regulations": regulations})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
