@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 건축 설계 가이드</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #input-box { width: 80%; padding: 10px; }
+        #submit-btn { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>AI 건축 설계 가이드</h1>
+    <p>건축 설계 아이디어를 입력하면 AI가 방향을 제시합니다.</p>
+    <textarea id="input-box" rows="4" placeholder="설계 아이디어를 입력하세요..."></textarea><br>
+    <button id="submit-btn">AI 분석 시작</button>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            const inputText = document.getElementById('input-box').value;
+            if (!inputText) {
+                alert("설계 내용을 입력하세요!");
+                return;
+            }
+
+            const apiKey = "YOUR_OPENAI_API_KEY"; // OpenAI API 키 입력
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: inputText }]
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById('output').innerText = data.choices[0].message.content;
+        });
+    </script>
+</body>
+</html>
