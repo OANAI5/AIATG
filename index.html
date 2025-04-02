@@ -56,6 +56,11 @@
                 <h3>전문가 커뮤니티</h3>
                 <p>건축가 및 학생들과 설계 아이디어를 공유하고 피드백을 받을 수 있습니다.</p>
             </div>
+            <div class="feature">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>환경 분석 및 개발 시나리오</h3>
+                <p>토지, 교통, 주변 시세, 건축 법규 데이터를 AI가 분석하여 최적의 개발 전략을 제공합니다.</p>
+            </div>
         </div>
     </div>
     <div class="chat-container">
@@ -88,4 +93,15 @@
                     })
                 });
                 if (!response.ok) {
-                    throw new Error("서버 오류 발
+                    throw new Error("서버 오류 발생");
+                }
+                const data = await response.json();
+                chatBox.innerHTML += `<div class='chat-message ai-message'>${data.choices[0].message.content}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                chatBox.innerHTML += `<div class='chat-message ai-message'>AI 분석 중 오류가 발생했습니다.</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
