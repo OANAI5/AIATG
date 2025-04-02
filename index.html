@@ -1,48 +1,55 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 건축 설계 플랫폼</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="sidebar">
-        <h2>메뉴</h2>
-        <ul>
-            <li><a href="#design">설계 가이드</a></li>
-            <li><a href="#regulations">건축 법규</a></li>
-            <li><a href="#3d">3D 모델</a></li>
-            <li><a href="#feedback">피드백</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <header>
-            <h1>AI 건축 설계 플랫폼</h1>
-        </header>
-        <section id="design">
-            <h2>설계 방향 제안</h2>
-            <textarea id="design-input" placeholder="설계 방향을 입력하세요..."></textarea>
-            <button onclick="generateDesign()">제안 받기</button>
-            <p id="design-result"></p>
-        </section>
-        <section id="regulations">
-            <h2>건축 법규 조회</h2>
-            <input id="location" type="text" placeholder="지역 입력 (예: 서울)">
-            <button onclick="getRegulations()">조회</button>
-            <p id="regulations-result"></p>
-        </section>
-        <section id="3d">
-            <h2>3D 모델 생성</h2>
-            <button onclick="generate3DModel()">생성</button>
-            <p id="model-result"></p>
-        </section>
-        <section id="feedback">
-            <h2>피드백 보내기</h2>
-            <textarea id="feedback-input" placeholder="피드백을 입력하세요..."></textarea>
-            <button onclick="sendFeedback()">제출</button>
-        </section>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+from flask import Flask, request, jsonify, render_template
+import openai
+from flask_cors import CORS
+
+app = Flask(__name__, template_folder="templates", static_folder="static")
+CORS(app)
+
+# OpenAI API Key 설정 (환경 변수로 설정 권장)
+openai.api_key = "YOUR_OPENAI_API_KEY"
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/generate-design", methods=["POST"])
+def generate_design():
+    data = request.json
+    user_input = data.get("description", "")
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
+            {"role": "user", "content": user_input}
+        ]
+    )
+    
+    return jsonify({"design_suggestion": response["choices"][0]["message"]["content"]})
+
+@app.route("/analyze-regulations", methods=["POST"])
+def analyze_regulations():
+    data = request.json
+    location = data.get("location", "")
+    
+    regulations_data = {
+        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
+        "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
+        "대구": "건폐율 55%, 용적률 270% 이하, 녹지지역은 30층 이하",
+        "광주": "건폐율 50%, 용적률 260% 이하, 혼합지역은 40층 이하",
+        "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
+    }
+    
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
+    return jsonify({"regulations": regulations})
+
+@app.route("/generate-3d-model", methods=["POST"])
+def generate_3d_model():
+    data = request.json
+    design_parameters = data.get("parameters", {})
+    
+    model_url = "https://example.com/sample-3d-model.obj"
+    return jsonify({"model_url": model_url})
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True)
