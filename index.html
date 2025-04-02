@@ -1,17 +1,20 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import openai
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
-# OpenAI API Key 설정 (테스트용 - 실제 사용 시 환경 변수로 설정 권장)
+# OpenAI API Key 설정
 openai.api_key = "YOUR_OPENAI_API_KEY"
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 @app.route("/generate-design", methods=["POST"])
 def generate_design():
     data = request.json
     user_input = data.get("description", "")
     
-    # AI 건축 설계 방향 제안
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -27,24 +30,24 @@ def analyze_regulations():
     data = request.json
     location = data.get("location", "")
     
-    # 샘플 건축 법규 데이터
     regulations_data = {
-        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역 높이 제한 35m",
-        "부산": "건폐율 50%, 용적률 250% 이하, 해안가 건축 규제 적용",
-        "대구": "건폐율 55%, 용적률 270% 이하, 대로변 10m 이격 필요"
+        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
+        "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
+        "대구": "건폐율 55%, 용적률 270% 이하, 녹지지역은 30층 이하",
+        "광주": "건폐율 50%, 용적률 260% 이하, 혼합지역은 40층 이하",
+        "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
     }
     
-    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다. 다른 지역을 입력해 주세요.")
-    return jsonify({"location": location, "regulations": regulations})
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
+    return jsonify({"regulations": regulations})
 
 @app.route("/generate-3d-model", methods=["POST"])
 def generate_3d_model():
     data = request.json
     design_parameters = data.get("parameters", {})
     
-    # 실제 API 없이 테스트용 응답 반환
-    sample_model_url = "https://example.com/sample-3d-model.obj"
-    return jsonify({"model_url": sample_model_url, "parameters": design_parameters})
+    model_url = "https://example.com/sample-3d-model.obj"
+    return jsonify({"model_url": model_url})
 
 if __name__ == "__main__":
     app.run(debug=True)
