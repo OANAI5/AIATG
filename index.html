@@ -30,13 +30,19 @@
             cursor: pointer; 
             border-bottom: 1px solid #40527f; 
             transition: 0.3s; 
+            display: flex;
+            align-items: center;
         }
+        .sidebar ul li i { margin-right: 10px; }
         .sidebar ul li:hover { background: #3b4f7d; }
         .main-content { 
             margin-left: 250px; 
             padding: 20px; 
             flex-grow: 1; 
             text-align: center; 
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
         }
         .header { 
             background: rgba(236, 240, 241, 0.9); 
@@ -46,6 +52,13 @@
             font-weight: bold; 
             border-radius: 10px; 
         }
+        .section-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
         .chat-container { 
             max-width: 900px; 
             margin: auto; 
@@ -53,29 +66,6 @@
             padding: 20px; 
             border-radius: 10px; 
             box-shadow: 0px 4px 10px rgba(0,0,0,0.3); 
-        }
-        .chat-box { 
-            height: 400px; 
-            overflow-y: auto; 
-            padding: 15px; 
-            border: 1px solid #ddd; 
-            background: #ecf0f1; 
-            border-radius: 5px; 
-        }
-        .chat-message { 
-            padding: 12px; 
-            border-radius: 5px; 
-            margin: 5px 0; 
-        }
-        .user-message { 
-            background: #3498db; 
-            color: white; 
-            text-align: right; 
-        }
-        .ai-message { 
-            background: #f1c40f; 
-            color: black; 
-            text-align: left; 
         }
         .input-area { 
             display: flex; 
@@ -107,7 +97,15 @@
     </style>
     <script>
         function navigateTo(section) {
-            document.getElementById("content").innerHTML = "<h2>" + section + "</h2><p>" + section + " 페이지가 여기에 표시됩니다.</p>";
+            let content = "<h2>" + section + "</h2><p>" + section + " 페이지가 여기에 표시됩니다.</p>";
+            if (section === "AI 설계") {
+                content += '<img src="https://source.unsplash.com/800x400/?blueprint,architecture" class="section-image">';
+            } else if (section === "법규 분석") {
+                content += '<img src="https://source.unsplash.com/800x400/?law,document" class="section-image">';
+            } else if (section === "3D 모델") {
+                content += '<img src="https://source.unsplash.com/800x400/?3dmodel,architecture" class="section-image">';
+            }
+            document.getElementById("content").innerHTML = content;
         }
     </script>
 </head>
@@ -130,7 +128,6 @@
                 <textarea id="input-box" class="input-box" rows="4" placeholder="대지 조건 및 요구 사항을 입력하세요..."></textarea>
                 <button id="submit-btn" class="submit-btn">🔎 설계 요청</button>
             </div>
-            <div class="chat-box" id="chat-box"></div>
         </div>
     </div>
 </body>
