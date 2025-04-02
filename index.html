@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify
 import openai
-import requests
 
 app = Flask(__name__)
 
-# OpenAI API Key 설정 (환경 변수로 설정 권장)
+# OpenAI API Key 설정 (테스트용 - 실제 사용 시 환경 변수로 설정 권장)
 openai.api_key = "YOUR_OPENAI_API_KEY"
 
 @app.route("/generate-design", methods=["POST"])
@@ -12,6 +11,7 @@ def generate_design():
     data = request.json
     user_input = data.get("description", "")
     
+    # AI 건축 설계 방향 제안
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -27,28 +27,24 @@ def analyze_regulations():
     data = request.json
     location = data.get("location", "")
     
-    # 한국 건축 법규 데이터 (예제)
+    # 샘플 건축 법규 데이터
     regulations_data = {
-        "서울": "건폐율 60%, 용적률 300% 이하",
-        "부산": "건폐율 50%, 용적률 250% 이하"
+        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역 높이 제한 35m",
+        "부산": "건폐율 50%, 용적률 250% 이하, 해안가 건축 규제 적용",
+        "대구": "건폐율 55%, 용적률 270% 이하, 대로변 10m 이격 필요"
     }
     
-    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
-    return jsonify({"regulations": regulations})
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다. 다른 지역을 입력해 주세요.")
+    return jsonify({"location": location, "regulations": regulations})
 
 @app.route("/generate-3d-model", methods=["POST"])
 def generate_3d_model():
     data = request.json
     design_parameters = data.get("parameters", {})
     
-    # Meshy AI 3D 모델 생성 API 연동 (예제)
-    model_response = requests.post("https://api.meshy.ai/generate", json=design_parameters)
-    
-    if model_response.status_code == 200:
-        model_url = model_response.json().get("model_url", "")
-        return jsonify({"model_url": model_url})
-    else:
-        return jsonify({"error": "3D 모델을 생성할 수 없습니다."}), 400
+    # 실제 API 없이 테스트용 응답 반환
+    sample_model_url = "https://example.com/sample-3d-model.obj"
+    return jsonify({"model_url": sample_model_url, "parameters": design_parameters})
 
 if __name__ == "__main__":
     app.run(debug=True)
