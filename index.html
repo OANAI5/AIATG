@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # 환경 변수 로드 (API 키 보안 강화)
 load_dotenv()
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app, resources={r"/*": {"origins": "*"}})  # 모든 도메인 허용
@@ -47,4 +47,16 @@ def analyze_regulations():
         "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
     }
 
-    regulations =
+    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
+    return jsonify({"regulations": regulations})
+
+@app.route("/generate-3d-model", methods=["POST"])
+def generate_3d_model():
+    data = request.json
+    design_parameters = data.get("parameters", {})
+
+    model_url = "https://example.com/sample-3d-model.obj"
+    return jsonify({"model_url": model_url})
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True)
