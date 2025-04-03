@@ -5,8 +5,8 @@ from flask_cors import CORS
 app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)
 
-# OpenAI API Key 설정 (환경 변수로 설정 권장)
-openai.api_key = "YOUR_OPENAI_API_KEY"
+# OpenAI API Key 직접 포함 (보안 취약 - 테스트용으로만 사용!)
+openai.api_key = "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"
 
 @app.route("/")
 def home():
