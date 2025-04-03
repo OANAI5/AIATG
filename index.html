@@ -1,45 +1,139 @@
-from flask import Flask, request, jsonify, render_template
-import openai
-from flask_cors import CORS
-import os
-from dotenv import load_dotenv
-
-# 환경 변수 로드 (API 키 보안 강화)
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-app = Flask(__name__, template_folder="templates", static_folder="static")
-CORS(app, resources={r"/*": {"origins": "*"}})  # 모든 도메인 허용
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/generate-design", methods=["POST"])
-def generate_design():
-    data = request.json
-    user_input = data.get("description", "")
-
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
-                {"role": "user", "content": user_input}
-            ]
-        )
-        ai_response = response["choices"][0]["message"]["content"]
-    except Exception as e:
-        ai_response = f"AI 응답 중 오류 발생: {str(e)}"
-
-    return jsonify({"design_suggestion": ai_response})
-
-@app.route("/analyze-regulations", methods=["POST"])
-def analyze_regulations():
-    data = request.json
-    location = data.get("location", "")
-
-    regulations_data = {
-        "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
-        "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
-        "대구": "건폐율 55%, 용적률 270% 이하, 녹
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildSmart - AI 건축 설계</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: url('https://source.unsplash.com/1600x900/?architecture,building') no-repeat center center fixed; 
+            background-size: cover; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            color: #2c3e50;
+        }
+        .sidebar { 
+            width: 250px; 
+            background: rgba(44, 62, 80, 0.9); 
+            color: white; 
+            height: 100vh; 
+            padding: 20px; 
+            position: fixed; 
+        }
+        .sidebar h2 { text-align: center; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li { 
+            padding: 15px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #40527f; 
+            transition: 0.3s; 
+            display: flex;
+            align-items: center;
+        }
+        .sidebar ul li i { margin-right: 10px; }
+        .sidebar ul li:hover { background: #3b4f7d; }
+        .main-content { 
+            margin-left: 250px; 
+            padding: 20px; 
+            flex-grow: 1; 
+            text-align: center; 
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+        }
+        .header { 
+            background: rgba(236, 240, 241, 0.9); 
+            color: #2c3e50; 
+            padding: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            border-radius: 10px; 
+        }
+        .section-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .chat-container { 
+            max-width: 900px; 
+            margin: auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3); 
+        }
+        .input-area { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-top: 20px; 
+        }
+        .input-box { 
+            width: 80%; 
+            padding: 15px; 
+            border-radius: 20px; 
+            border: 2px solid #34495e; 
+            font-size: 16px; 
+            background: white; 
+            box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+        }
+        .submit-btn { 
+            margin-top: 10px; 
+            padding: 12px 25px; 
+            background: #e74c3c; 
+            color: white; 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            transition: 0.3s; 
+        }
+        .submit-btn:hover { background: #c0392b; }
+    </style>
+    <script>
+        function navigateTo(section) {
+            let content = "";
+            if (section === "홈") {
+                content = "<h2>🏡 BuildSmart에 오신 것을 환영합니다!</h2><p>건축 설계와 법규 분석을 AI로 쉽게 해결하세요.</p>";
+            } else if (section === "AI 설계") {
+                content = '<h2>🖥️ AI 설계</h2><p>대지 조건을 입력하면 AI가 최적의 설계를 제안합니다.</p>';
+                content += '<textarea class="input-box" rows="4" placeholder="대지 조건을 입력하세요..."></textarea>';
+                content += '<button class="submit-btn">🔎 설계 요청</button>';
+            } else if (section === "법규 분석") {
+                content = '<h2>⚖️ 법규 분석</h2><p>건축 법규를 확인하고 요약해드립니다.</p>';
+                content += '<button class="submit-btn">📜 법규 조회</button>';
+            } else if (section === "3D 모델") {
+                content = '<h2>🏗️ 3D 모델 생성</h2><p>입력된 정보로 3D 건축 모델을 생성합니다.</p>';
+                content += '<button class="submit-btn">🎨 모델 생성</button>';
+            } else if (section === "마이 페이지") {
+                content = '<h2>👤 마이 페이지</h2><p>내가 요청한 설계 및 법규 분석 내역을 확인하세요.</p>';
+            }
+            document.getElementById("content").innerHTML = content;
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏗️ BuildSmart</h2>
+        <ul>
+            <li onclick="navigateTo('홈')"><i class="fas fa-home"></i> 홈</li>
+            <li onclick="navigateTo('AI 설계')"><i class="fas fa-ruler-combined"></i> AI 설계</li>
+            <li onclick="navigateTo('법규 분석')"><i class="fas fa-balance-scale"></i> 법규 분석</li>
+            <li onclick="navigateTo('3D 모델')"><i class="fas fa-cube"></i> 3D 모델</li>
+            <li onclick="navigateTo('마이 페이지')"><i class="fas fa-user"></i> 마이 페이지</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">AI 건축 설계 시스템</div>
+        <div id="content" class="chat-container">
+            <h2>🏡 BuildSmart에 오신 것을 환영합니다!</h2>
+            <p>건축 설계와 법규 분석을 AI로 쉽게 해결하세요.</p>
+        </div>
+    </div>
+</body>
+</html>
