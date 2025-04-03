@@ -42,21 +42,4 @@ def analyze_regulations():
     regulations_data = {
         "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
         "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
-        "대구": "건폐율 55%, 용적률 270% 이하, 녹지지역은 30층 이하",
-        "광주": "건폐율 50%, 용적률 260% 이하, 혼합지역은 40층 이하",
-        "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
-    }
-
-    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
-    return jsonify({"regulations": regulations})
-
-@app.route("/generate-3d-model", methods=["POST"])
-def generate_3d_model():
-    data = request.json
-    design_parameters = data.get("parameters", {})
-
-    model_url = "https://example.com/sample-3d-model.obj"
-    return jsonify({"model_url": model_url})
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+        "대구": "건폐율 55%, 용적률 270% 이하, 녹
