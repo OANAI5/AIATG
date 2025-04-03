@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify, render_template
 import openai
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+
+# 환경 변수 로드 (API 키 보안 강화)
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-CORS(app)
-
-# OpenAI API Key 직접 포함 (보안 취약 - 테스트용으로만 사용!)
-openai.api_key = "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"
+CORS(app, resources={r"/*": {"origins": "*"}})  # 모든 도메인 허용
 
 @app.route("/")
 def home():
@@ -16,22 +19,26 @@ def home():
 def generate_design():
     data = request.json
     user_input = data.get("description", "")
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
-            {"role": "user", "content": user_input}
-        ]
-    )
-    
-    return jsonify({"design_suggestion": response["choices"][0]["message"]["content"]})
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
+                {"role": "user", "content": user_input}
+            ]
+        )
+        ai_response = response["choices"][0]["message"]["content"]
+    except Exception as e:
+        ai_response = f"AI 응답 중 오류 발생: {str(e)}"
+
+    return jsonify({"design_suggestion": ai_response})
 
 @app.route("/analyze-regulations", methods=["POST"])
 def analyze_regulations():
     data = request.json
     location = data.get("location", "")
-    
+
     regulations_data = {
         "서울": "건폐율 60%, 용적률 300% 이하, 주거지역은 35층 이하",
         "부산": "건폐율 50%, 용적률 250% 이하, 상업지역은 45층 이하",
@@ -39,17 +46,5 @@ def analyze_regulations():
         "광주": "건폐율 50%, 용적률 260% 이하, 혼합지역은 40층 이하",
         "대전": "건폐율 58%, 용적률 280% 이하, 개발 가능 토지 5000㎡ 이상"
     }
-    
-    regulations = regulations_data.get(location, "해당 지역의 건축 법규 정보가 없습니다.")
-    return jsonify({"regulations": regulations})
 
-@app.route("/generate-3d-model", methods=["POST"])
-def generate_3d_model():
-    data = request.json
-    design_parameters = data.get("parameters", {})
-    
-    model_url = "https://example.com/sample-3d-model.obj"
-    return jsonify({"model_url": model_url})
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    regulations =
