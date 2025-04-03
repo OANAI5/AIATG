@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # 환경 변수 로드 (API 키 보안 강화)
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("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")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app, resources={r"/*": {"origins": "*"}})  # 모든 도메인 허용
