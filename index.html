@@ -137,3 +137,34 @@
     </div>
 </body>
 </html>
+from flask import Flask, request, jsonify
+import openai
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+# OpenAI API Key (보안상 환경변수 사용 권장)
+openai.api_key = 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
+
+@app.route("/generate-design", methods=["POST"])
+def generate_design():
+    data = request.json
+    user_input = data.get("description", "")
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "당신은 건축 설계 전문가입니다. 사용자의 요구 사항에 맞춰 설계 방향을 제안하세요."},
+                {"role": "user", "content": user_input}
+            ]
+        )
+        ai_response = response["choices"][0]["message"]["content"]
+    except Exception as e:
+        ai_response = f"오류 발생: {str(e)}"
+
+    return jsonify({"design_suggestion": ai_response})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
